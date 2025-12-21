@@ -13,6 +13,11 @@ input_dir=$1
 save_dir=${2:-/mnt/sn580}
 server_ip=${3:-"dietpi@10.0.0.88"}
 
+# Check arguments are passed
+if [[ -z $input_dir || $# -gt 3 ]]; then 
+    echo "usage: backup.sh <input_dir> <save_dir, defaulted to /mnt/sn580> <server_ip, defaulted to dietpi@10.0.88>"
+    exit 1
+fi 
 
 # test the input folder is a dir
 test -d "$input_dir" || { echo "ERROR: $input_dir is not a directory" >&2 ; exit 1 ; }
