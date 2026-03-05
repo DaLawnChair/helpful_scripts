@@ -11,7 +11,7 @@
 # access variables 
 input_dir=$1 
 save_dir=${2:-/mnt/sn580}
-server_ip=${3:-"dietpi@10.0.0.88"}
+server_ip=${3:-"dietpi@100.83.4.39"}
 
 # Check arguments are passed
 if [[ -z $input_dir || $# -gt 3 ]]; then 

@@ -19,6 +19,7 @@ A simple script that makes debugging into 1 line. Given a program name, tt will 
 This is designed to run within the folder itself.
 
 ``` 
-. run.sh <program_name>
+. run.sh <program_name> <execution_name, defaulted to program_name>
 ```
 where `program_name` represents the name for compilation within the `makefile` as well as the outputted name of the program.
+Edit: added `execution_name`, because it is useful execute the file inside of a different folder than the one compiled
