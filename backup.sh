@@ -15,12 +15,12 @@ server_ip=${3:-"dietpi@100.83.4.39"}
 
 # Check arguments are passed
 if [[ -z $input_dir || $# -gt 3 ]]; then 
-    echo "usage: backup.sh <input_dir> <save_dir, defaulted to /mnt/sn580> <server_ip, defaulted to dietpi@10.0.88>"
+    echo "usage: backup.sh <input_dir_or_file> <save_dir, defaulted to /mnt/sn580> <server_ip, defaulted to dietpi@10.0.88>"
     exit 1
 fi 
 
-# test the input folder is a dir
-test -d "$input_dir" || { echo "ERROR: $input_dir is not a directory" >&2 ; exit 1 ; }
+## test the input folder is a dir (no longer needed)
+# test -d "$input_dir" || { echo "ERROR: $input_dir is not a directory" >&2 ; exit 1 ; }
 
 # test ssh server access and directory existance
 ssh_without_password(){
@@ -43,8 +43,16 @@ save_dir_is_dir_test=$?
 # perform the backup
 # this will tar the input_dir, pipe the output to a tee that will allow the ssh server to copy and extract the .tar, as well as remove the temporary file
 # data is produced as a stream (because of - in tar) that is piped to the ssh server and to /dev/null, thus no intermediate version is needed for another read-write to copy to the server
+# the tqdm command uses 
 backup(){
-    tar cf - $input_dir | tee  >(ssh $server_ip tar xf - --directory $save_dir) > /dev/null
+    ## no progress bar version
+    # tar cf - $input_dir | tee  >(ssh $server_ip tar xf - --directory $save_dir) | > /dev/null
+    
+    total_bytes=$(du -sb "$input_dir" | cut -f1)
+
+    tar cf - "$input_dir" \
+      | tqdm --bytes --total "$total_bytes" --desc "transfer" \
+      | ssh "$server_ip" "mkdir -p '$save_dir' && tar xf - -C '$save_dir'"
 }
 backup 
 
